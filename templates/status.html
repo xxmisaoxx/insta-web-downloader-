@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Download in Progress...</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold mb-8">Downloading @{{ status.username or "posts" }}...</h1>
+    <div class="bg-gray-800 rounded-2xl p-10 max-w-md mx-auto shadow-2xl">
+      <div class="text-6xl font-mono mb-4">{{ status.progress }} / {{ status.total }}</div>
+      <div class="text-xl text-gray-400 mb-6">{{ status.message }}</div>
+      <div class="w-full bg-gray-700 rounded-full h-8 overflow-hidden">
+        <div id="bar" class="bg-gradient-to-r from-pink-500 to-violet-500 h-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+      <div class="mt-8">
+        <a href="/" class="text-gray-400 hover:text-white">← New Download</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function update() {
+      fetch("/api/status").then(r => r.json()).then(s => {
+        document.querySelector("#bar").style.width = (s.progress / Math.max(s.total === "???" ? 100 : s.total, 1) * 100) + "%";
+        if (!s.running && s.zip_path) {
+          document.querySelector("h1").innerHTML = `Complete! <a href="/download" class="text-green-400 underline">Download ZIP</a>`;
+        } else {
+          document.title = `${s.progress} posts – IG Downloader`;
+        }
+        if (s.running) setTimeout(update, 1500);
+      });
+    }
+    update();
+  </script>
+</body>
+</html>
