@@ -1,0 +1,4 @@
+Flask==3.0.3
+instaloader>=4.12
+tqdm==4.66.5
+gunicorn==22.0.0
